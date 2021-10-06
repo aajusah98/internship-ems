@@ -1,12 +1,16 @@
 package com.internship.ems.model;
 
+import com.internship.ems.enums.Gender;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 
 @Entity
@@ -19,18 +23,17 @@ public class Employee {
     long  employeeId;
 
 
-    @NotNull
-    @Size(min = 2,max = 10,message = "Name Should Be Grater Than 4 Char And Less Than 10")
+    @Column(nullable = false)
     private String firstName;
 
     @NotNull
     @Size(min = 2,max = 10,message = "Name Should Be Grater Than 4 Char And Less Than 10")
     private String lastName;
 
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    @NotNull
-    @Min(18)
+    @Column(name="age",columnDefinition = "int default 24")
     private int age;
 
     @NotNull
@@ -46,4 +49,13 @@ public class Employee {
     private LocalDate resignedDate;
 
     private String address;
+
+    @PrePersist
+    public void PrePersist(){
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        LocalDate localDate = LocalDate.now();
+        this.setHireDate(localDate.atStartOfDay(defaultZoneId).toLocalDate());
+    }
+
+
 }
