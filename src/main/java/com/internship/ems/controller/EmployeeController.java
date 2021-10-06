@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,9 +23,9 @@ public class EmployeeController {
     EmployeeService service;
 
     @PostMapping("/addEmployee")
-    public Employee addEmployee(@RequestBody Employee employee){
-
-        return service.save(employee);
+    public ResponseEntity<Employee> addEmployee(@Valid  @RequestBody Employee employee){
+        Employee serviceEmployee=service.save(employee);
+        return new ResponseEntity<>(serviceEmployee,HttpStatus.CREATED);
     }
 
     @GetMapping("/employee")

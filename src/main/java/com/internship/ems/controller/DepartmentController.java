@@ -22,9 +22,15 @@ public class DepartmentController {
     @Autowired
     DepartmentService service;
 
-    @PostMapping("/addDepartment")
-    public Department addDepartment(@Valid @RequestBody Department department){
+//    @PostMapping("/addDepartment")
+//        public ResponseEntity<Department> addDepartment(@Valid @RequestBody Department department){
+//        Department serviceDepartment= service.save(department);
+//        return new ResponseEntity<>(serviceDepartment,HttpStatus.CREATED);
+//    }
 
+
+    @PostMapping("/addDepartment")
+        public Department addDepartment(@Valid @RequestBody Department department){
         return service.save(department);
     }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,9 +22,9 @@ public class SalaryController {
     SalaryService service;
 
     @PostMapping("/addSalary")
-    public Salary addSalary(@RequestBody Salary salary){
-
-        return service.save(salary);
+    public ResponseEntity<Salary> addSalary(@Valid  @RequestBody Salary salary){
+        Salary serviceProject = service.save(salary);
+        return new ResponseEntity<>(serviceProject,HttpStatus.CREATED);
     }
 
     @GetMapping("/salary")

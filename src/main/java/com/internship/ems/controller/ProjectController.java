@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,9 +22,9 @@ public class ProjectController {
     ProjectService service;
 
     @PostMapping("/addProject")
-    public Project addProject(@RequestBody Project project){
-
-        return service.save(project);
+    public ResponseEntity<Project> addProject(@Valid  @RequestBody Project project){
+        Project serviceProject= service.save(project);
+        return new ResponseEntity<>(serviceProject,HttpStatus.CREATED);
     }
 
     @GetMapping("/project")
