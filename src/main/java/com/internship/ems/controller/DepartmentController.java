@@ -1,11 +1,15 @@
 package com.internship.ems.controller;
 
+import com.internship.ems.Mapper.DepartmentMapper;
+import com.internship.ems.dao.DepartmentRepository;
+import com.internship.ems.dto.DepartmentDto;
 import com.internship.ems.model.*;
 import com.internship.ems.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,36 +25,41 @@ import java.util.List;
 public class DepartmentController {
     @Autowired
     DepartmentService service;
-//
-//    @PostMapping("/addDepartment")
-//        public ResponseEntity<Department> addDepartment(@Valid @RequestBody Department department){
-//        Department serviceDepartment= service.save(department);
-//        return new ResponseEntity<>(serviceDepartment,HttpStatus.CREATED);
-//    }
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
 
     @PostMapping("/addDepartment")
-        public Department addDepartment(@Valid @RequestBody Department department){
-        return service.save(department);
+    public ResponseEntity<DepartmentDto> save(@Valid @RequestBody DepartmentDto departmentDto){
+           DepartmentDto departmentDto1= DepartmentMapper.INSTANCE.modelToDto( service.save(
+                departmentMapper.dtoToModel(departmentDto)));
+        return new ResponseEntity<>(departmentDto1, HttpStatus.CREATED);
     }
 
     @GetMapping("/department")
-    public List<Department> getAllDepartment(){
-
-        return service.getAll();
+    public ResponseEntity <List <DepartmentDto> > getAllDepartment(){
+        return new ResponseEntity<>(departmentMapper.modlesToDtos(service.getAll()),HttpStatus.OK);
     }
+
 
     @GetMapping("/department/{id}")
-    public Department getDepartmentById(@PathVariable Long id){
+    public ResponseEntity<DepartmentDto> getDepartmentById(@PathVariable Long id){
 
-        return service.getById(id);
+        return new ResponseEntity<>(departmentMapper.modelToDto(service.getById(id)),HttpStatus.OK);
     }
+
+
 
 
 
     @PutMapping("/updateDepartment/{id}")
-    public Department updateDepartment(@PathVariable Long id, @RequestBody Department departmentInfo) {
-        return service.updateDepartment(id, departmentInfo);
+    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody  DepartmentDto departmentDto) {
+
+        return new ResponseEntity<>(
+                service.updateDepartment(id,
+                        departmentMapper.dtoToModel(departmentDto)
+                ), HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteDepartment/{id}")
@@ -63,4 +72,10 @@ public class DepartmentController {
         }
 
     }
+
+//    @DeleteMapping("/deleteDepartment/{id}")
+//    public ResponseEntity<DepartmentDto> removeDepartment(@PathVariable Long id){
+//        return new ResponseEntity<Department>(service.deleteDepartment(id),HttpStatus.OK);
+//    }
+
 }

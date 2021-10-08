@@ -1,10 +1,17 @@
 package com.internship.ems.controller;
 
+import com.internship.ems.Mapper.SalaryMapper;
+import com.internship.ems.dto.DepartmentDto;
+import com.internship.ems.dto.EmployeeDto;
+import com.internship.ems.dto.SalaryDto;
+import com.internship.ems.model.Department;
+import com.internship.ems.model.Employee;
 import com.internship.ems.model.Salary;
 import com.internship.ems.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,30 +28,39 @@ public class SalaryController {
     @Autowired
     SalaryService service;
 
+    @Autowired
+    SalaryMapper salaryMapper;
+
+
     @PostMapping("/addSalary")
-    public ResponseEntity<Salary> addSalary(@Valid  @RequestBody Salary salary){
-        Salary serviceProject = service.save(salary);
-        return new ResponseEntity<>(serviceProject,HttpStatus.CREATED);
+    public ResponseEntity<SalaryDto> saveSalary(@Valid @RequestBody SalaryDto salaryDto){
+        SalaryDto salaryDtoSave = salaryMapper.modelToDto(service.save(salaryMapper.dtoToModel(salaryDto)));
+
+        return new ResponseEntity<>(salaryDtoSave, HttpStatus.CREATED);
     }
 
     @GetMapping("/salary")
-    public List<Salary> getAllSalary(){
+    public ResponseEntity <List <SalaryDto> > getAllSalary(){
 
-        return service.getAll();
+        return new ResponseEntity<>(salaryMapper.modlesToDtos(service.getAll()),HttpStatus.OK);
     }
 
     @GetMapping("/salary/{id}")
-    public Salary getSalaryById(@PathVariable Long id){
+    public ResponseEntity<SalaryDto> getSalaryById(@PathVariable Long id){
 
-        return service.getById(id);
+        return new ResponseEntity<>(salaryMapper.modelToDto(service.getById(id)),HttpStatus.OK);
     }
-
 
 
     @PutMapping("/updateSalary/{id}")
-    public Salary updateSalary(@PathVariable Long id, @RequestBody Salary salaryInfo) {
-        return service.updateSalary(id, salaryInfo);
+    public ResponseEntity<Salary> updateSalary(@PathVariable Long id, @RequestBody SalaryDto salaryDto) {
+        return new ResponseEntity<>(
+                service.updateSalary(id,
+                        salaryMapper.dtoToModel(salaryDto)
+                ), HttpStatus.OK);
     }
+
+
 
     @DeleteMapping("/deleteSalary/{id}")
     public ResponseEntity<HttpStatus> removeSalary(@PathVariable Long id){

@@ -1,7 +1,10 @@
 package com.internship.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.internship.ems.enums.Gender;
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -11,15 +14,17 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
-@Entity
-
-@Table(name = "employee", uniqueConstraints= {@UniqueConstraint(columnNames={"email"})})
+@Entity(name = "employee")
+@Table(name = "employee", uniqueConstraints= {@UniqueConstraint(columnNames={"email"}), @UniqueConstraint(columnNames = {"employee_id"}) })
 @Data
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "employee_id",unique = true,nullable = false)
     long  employeeId;
 
 
@@ -41,6 +46,7 @@ public class Employee {
     private String email;
 
 
+
     private String designation;
 
 
@@ -49,6 +55,16 @@ public class Employee {
     private LocalDate resignedDate;
 
     private String address;
+
+    @ManyToOne
+    @JoinColumn(name = "departmentId")
+    @JsonBackReference(value = "employee-department")
+    private Department department;
+
+    @OneToOne
+    @JoinColumn(name = "salaryId")
+    @JsonBackReference(value = "employee-salary")
+    public Salary salary;
 
     @PrePersist
     public void PrePersist(){

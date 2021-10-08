@@ -1,5 +1,7 @@
 package com.internship.ems.controller;
 
+import com.internship.ems.Mapper.EmployeeMapper;
+import com.internship.ems.dto.EmployeeDto;
 import com.internship.ems.model.Employee;
 import com.internship.ems.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +24,41 @@ public class EmployeeController {
     @Autowired
     EmployeeService service;
 
+    @Autowired
+    EmployeeMapper employeeMapper;
+
+
+
+
+
     @PostMapping("/addEmployee")
-    public ResponseEntity<Employee> addEmployee(@Valid  @RequestBody Employee employee){
-        Employee serviceEmployee=service.save(employee);
-        return new ResponseEntity<>(serviceEmployee,HttpStatus.CREATED);
+    public ResponseEntity<EmployeeDto> addEmployee(@Valid @RequestBody EmployeeDto employeeDtoDto){
+       EmployeeDto employeeDto= EmployeeMapper.INSTANCE.modelToDto( service.save(employeeMapper.dtoToModel(employeeDtoDto)));
+        return new ResponseEntity<EmployeeDto>(employeeDto,HttpStatus.CREATED);
     }
 
     @GetMapping("/employee")
-    public List<Employee> getAllEmployee(){
+    public ResponseEntity <List <EmployeeDto> > getAllEmployee(){
 
-        return service.getAll();
+        return new ResponseEntity<>(employeeMapper.modlesToDtos(service.getAll()),HttpStatus.OK);
     }
 
     @GetMapping("/employee/{id}")
-    public Employee getEmployeeById(@PathVariable Long id){
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id){
 
-        return service.getById(id);
+        return new ResponseEntity<>(employeeMapper.modelToDto(service.getById(id)),HttpStatus.OK);
     }
-
 
 
     @PutMapping("/updateEmployee/{id}")
-    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employeeInfo) {
-        return service.updateEmployee(id, employeeInfo);
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDto employeeDto) {
+        return new ResponseEntity<>(
+                service.updateEmployee(id,
+                        employeeMapper.dtoToModel(employeeDto)
+                ), HttpStatus.OK);
     }
+
+
 
     @DeleteMapping("/deleteEmployee/{id}")
     public ResponseEntity<HttpStatus> removeEmployee(@PathVariable Long id){
@@ -58,4 +71,9 @@ public class EmployeeController {
         }
 
     }
+
+
+
+
+
 }

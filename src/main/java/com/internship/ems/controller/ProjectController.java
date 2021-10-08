@@ -1,5 +1,10 @@
 package com.internship.ems.controller;
 
+import com.internship.ems.Mapper.EmployeeMapper;
+import com.internship.ems.Mapper.ProjectMapper;
+import com.internship.ems.dto.EmployeeDto;
+import com.internship.ems.dto.ProjectDto;
+import com.internship.ems.model.Employee;
 import com.internship.ems.model.Project;
 import com.internship.ems.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +26,37 @@ public class ProjectController {
     @Autowired
     ProjectService service;
 
+    @Autowired
+    ProjectMapper projectMapper;
+
+
     @PostMapping("/addProject")
-    public ResponseEntity<Project> addProject(@Valid  @RequestBody Project project){
-        Project serviceProject= service.save(project);
-        return new ResponseEntity<>(serviceProject,HttpStatus.CREATED);
+    public ResponseEntity<ProjectDto> addProject(@Valid  @RequestBody ProjectDto projectDto){
+        ProjectDto projectDto1= ProjectMapper.INSTANCE.modelToDto(service.save(projectMapper.dtoToModel(projectDto)));
+        return new ResponseEntity<>(projectDto1,HttpStatus.CREATED);
     }
 
     @GetMapping("/project")
-    public List<Project> getAllProject(){
-
-        return service.getAll();
+    public ResponseEntity <List  <ProjectDto> > getAllProject(){
+        return new ResponseEntity<>(projectMapper.modlesToDtos(service.getAll()),HttpStatus.OK);
     }
 
     @GetMapping("/project/{id}")
-    public Project getProjectById(@PathVariable Long id){
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id){
 
-        return service.getById(id);
+        return new ResponseEntity<>(projectMapper.modelToDto(service.getById(id)),HttpStatus.OK);
     }
 
 
 
     @PutMapping("/updateProject/{id}")
-    public Project updateProject(@PathVariable Long id, @RequestBody Project projectInfo) {
-        return service.updateProject(id, projectInfo);
+    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody ProjectDto projectDto) {
+        return new ResponseEntity (
+                service.updateProject(id,
+                        projectMapper.dtoToModel(projectDto)
+                ), HttpStatus.OK);
     }
+
 
     @DeleteMapping("/deleteProject/{id}")
     public ResponseEntity<HttpStatus> removeProject(@PathVariable Long id){

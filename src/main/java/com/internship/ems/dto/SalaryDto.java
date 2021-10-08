@@ -1,19 +1,20 @@
-package com.internship.ems.model;
+package com.internship.ems.dto;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.internship.ems.model.Employee;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-
-@Entity
-@Table(name = "salary")
 @Data
-public class Salary {
+public class SalaryDto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long salaryId;
@@ -27,7 +28,6 @@ public class Salary {
 
     private float bonus;
 
-    @OneToOne(mappedBy = "salary")
-    @JsonManagedReference(value = "employee-salary")
     private Employee employee;
+
 }

@@ -1,26 +1,28 @@
 package com.internship.ems.model;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.List;
 
 
-@Entity
+@Entity(name = "department")
 @Table(name = "department")
 @Data
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "department_id",unique = true,nullable = false)
     private long  departmentId;
-
-    @NotNull
-    @Size(min = 2,max = 10,message = "Name Should Be Grater Than 4 Char And Less Than 10")
     private String name;
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "department",  fetch = FetchType.LAZY)
+    @JsonManagedReference(value =  "employee-department")
+    private List<Employee> employee;
+
 
     @PreRemove
     public void PreRemove(){
@@ -31,6 +33,7 @@ public class Department {
     public  void PostRemove(){
         System.out.println("Post Removed "+this);
     }
+
 
 
 }
