@@ -19,6 +19,7 @@ import java.util.Set;
 
 
 @Entity(name = "employee")
+@NamedQuery(name = "Employee.getEmployeeByNamedQuery", query = "select e from employee e where e.department.departmentId=:id")
 @Table(name = "employee", uniqueConstraints= {@UniqueConstraint(columnNames={"email"}), @UniqueConstraint(columnNames = {"employee_id"}) })
 @Data
 public class Employee {

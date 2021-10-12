@@ -2,20 +2,16 @@ package com.internship.ems.controller;
 
 import com.internship.ems.Mapper.EmployeeMapper;
 import com.internship.ems.dto.EmployeeDto;
+import com.internship.ems.enums.Gender;
 import com.internship.ems.model.Employee;
 import com.internship.ems.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -58,6 +54,51 @@ public class EmployeeController {
                 ), HttpStatus.OK);
     }
 
+    @GetMapping("/employeesByGender/{gender}")
+    public List<EmployeeDto> getEmployeeByGender(@PathVariable Gender gender){
+
+        return  employeeMapper.modlesToDtos(service.getEmployeeByGender(gender));
+    }
+
+
+    @GetMapping("/employeeByFirstName/{firstName}")
+    public List<EmployeeDto> findEmployeeByFirstName(@PathVariable String firstName){
+        return employeeMapper.modlesToDtos(service.getEmployeeByFirstName(firstName));
+    }
+
+    @GetMapping("/employeeByGenderAndAge/{gender}&{age}")
+    public List<EmployeeDto> findEmployeeByGenderAndAge(@PathVariable Gender gender, @PathVariable int age){
+        return employeeMapper.modlesToDtos(service.getEmployeeByGenderAndAge(gender, age));
+    }
+
+    @Transactional
+    @PutMapping("/updateEmployeeAgeById/{id}&{age}")
+    public String updateEmployeeAgeById(@PathVariable Long id, @PathVariable int age){
+        return service.updateById(id, age);
+    }
+
+    @Transactional
+    @DeleteMapping("/deleteEmployeeById/{id}")
+    public String  deleteEmployeeById(@PathVariable Long id){
+        return service.deleteEmployeeById(id);
+    }
+
+
+
+    @GetMapping("/custom/employees/namedQuery")
+    public List<EmployeeDto> getEmployeeByNamedQuery(@RequestParam("departmentId") Long departmentId) {
+        return employeeMapper.modlesToDtos(service.getByNamedQuery(departmentId));
+    }
+
+    @GetMapping("/custom/employees/typedQuery")
+    public List<EmployeeDto> getEmployeeByTypedQuery(@RequestParam("departmentId") Long departmentId) {
+        return employeeMapper.modlesToDtos(service.getByTypedQuery(departmentId));
+    }
+
+    @GetMapping("/custom/employees/criteriaApi")
+    public List<EmployeeDto> getEmployeeByJpql(@RequestParam("amount") float amount, @RequestParam("bonus") float bonus) {
+        return employeeMapper.modlesToDtos(service.getByCriteriaApi(amount, bonus));
+    }
 
 
     @DeleteMapping("/deleteEmployee/{id}")
@@ -71,6 +112,8 @@ public class EmployeeController {
         }
 
     }
+
+
 
 
 

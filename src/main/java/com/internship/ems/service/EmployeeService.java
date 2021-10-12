@@ -1,6 +1,9 @@
 package com.internship.ems.service;
 
+import com.internship.ems.dao.EmployeeDao;
 import com.internship.ems.dao.EmployeeRepository;
+import com.internship.ems.dto.EmployeeDto;
+import com.internship.ems.enums.Gender;
 import com.internship.ems.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,9 @@ import java.util.List;
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepo;
+
+    @Autowired
+    private EmployeeDao employeeDao;
 
     public Employee save(Employee employee){
 
@@ -48,4 +54,42 @@ public class EmployeeService {
     public void deleteEmployee(Long id){
        employeeRepo.deleteById(id);
     }
+
+    public List<Employee> getEmployeeByGender(Gender gender){
+        return  employeeRepo.getEmployeeByGender(gender);
+    }
+
+    public List<Employee> getEmployeeByFirstName(String firstName){
+
+        return employeeRepo.getUserByFirstName(firstName);
+    }
+
+    public List<Employee> getEmployeeByGenderAndAge(Gender gender, int age){
+
+        return employeeRepo.getEmployeeByGenderAndAge(gender, age);
+    }
+
+    public String updateById(Long id, int age){
+        employeeRepo.updateEmployeeById(id, age);
+        return "Age of id: "+id+" updated";
+    }
+
+    public String deleteEmployeeById(Long id){
+        employeeRepo.deleteEmployeeById(id);
+
+        return "ID: "+id+" Deleted";
+    }
+
+    public List<Employee> getByNamedQuery(Long departmentId) {
+        return employeeDao.getEmployeeByNamedQuery(departmentId);
+    }
+
+    public List<Employee> getByTypedQuery(Long departmentId) {
+        return employeeDao.getEmployeeByTypedQuery(departmentId);
+    }
+
+    public List<Employee> getByCriteriaApi(float amount, float bonus) {
+        return employeeDao.getEmployee(amount, bonus);
+    }
+
 }
